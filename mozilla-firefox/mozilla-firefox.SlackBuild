@@ -171,7 +171,6 @@ find . \
 
 # Our building options, in a configure-like display ;)
 OPTIONS="\
-  --disable-rust \
   --enable-official-branding \
   --prefix=/usr \
   --libdir=/usr/lib${LIBDIRSUFFIX} \
