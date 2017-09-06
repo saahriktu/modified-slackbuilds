@@ -1,0 +1,12 @@
+diff -ur sbcl-1.3.21/src/runtime/x86-64-linux-os.h sbcl-1.3.21_patched/src/runtime/x86-64-linux-os.h
+--- sbcl-1.3.21/src/runtime/x86-64-linux-os.h	2017-08-31 12:40:51.000000000 +0300
++++ sbcl-1.3.21_patched/src/runtime/x86-64-linux-os.h	2017-09-05 22:49:03.973429794 +0300
+@@ -1,7 +1,7 @@
+ #ifndef _X86_64_LINUX_OS_H
+ #define _X86_64_LINUX_OS_H
+ 
+-typedef struct ucontext os_context_t;
++typedef struct ucontext_t os_context_t;
+ typedef long os_context_register_t;
+ 
+ static inline os_context_t *arch_os_get_context(void **void_context)
