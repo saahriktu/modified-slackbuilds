@@ -21,7 +21,7 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-VERSION=$(ls xpdf-*.tar.?z* | cut -d - -f 2 | cut -d . -f 1-2)
+VERSION=$(ls xpdf-*.tar.?z* | cut -d - -f 2 | sed 's/\.tar\..*$//')
 PATCHLEVEL=
 BUILD=${BUILD:-2}
 
@@ -72,13 +72,15 @@ find . \
 
 #zcat $CWD/patches/xpdfrc.diff.gz | patch -p1 --verbose || exit 1
 
+mkdir build; cd build
+
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr \
 -DCMAKE_INSTALL_LIBDIR=/usr/lib${LIBDIRSUFFIX} \
 -DCMAKE_INSTALL_MANDIR=/usr/man \
 -DCMAKE_INSTALL_SYSCONFDIR=/etc \
-.
+..
 #./configure \
 #  --prefix=/usr \
 #  --libdir=/usr/lib${LIBDIRSUFFIX} \
