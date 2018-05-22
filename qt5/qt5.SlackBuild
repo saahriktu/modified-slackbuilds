@@ -46,7 +46,7 @@
 # tailored to Qt 5. Modified by Larry Hajali.
 
 PRGNAM=qt5
-VERSION=$(ls qt-*.tar.* | cut -d - -f 5 | sed 's/\.tar.*$//')
+VERSION=$(ls qt-*.tar.* | cut -d - -f 4 | sed 's/\.tar.*$//')
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
@@ -92,9 +92,9 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf ${PRGNAM/5/}-everywhere-opensource-src-$VERSION
-tar xvf $CWD/${PRGNAM/5/}-everywhere-opensource-src-$VERSION.tar.xz
-cd ${PRGNAM/5/}-everywhere-opensource-src-$VERSION
+rm -rf ${PRGNAM/5/}-everywhere-src-$VERSION
+tar xvf $CWD/${PRGNAM/5/}-everywhere-src-$VERSION.tar.xz
+cd ${PRGNAM/5/}-everywhere-src-$VERSION
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -149,6 +149,7 @@ export CXXFLAGS="$SLKCFLAGS"
   -xcb \
   -glib \
   -accessibility \
+  -skip qtwebengine \
   -no-separate-debug-info \
   -no-pch \
   -no-rpath \
@@ -159,7 +160,7 @@ export CXXFLAGS="$SLKCFLAGS"
   $RELOCATIONS \
   $BUILD_EXAMPLES
 
-make
+make -j16
 make install INSTALL_ROOT=$PKG
 
 # Install documentation. Default is not to install documentation.
@@ -224,10 +225,10 @@ Version: $VERSION
 EOF
 
 # Fix internal linking for Qt5WebEngineCore.pc.
-sed -i \
-  -e 's|-Wl,--start-group.* -Wl,--end-group||' \
-  -e "s|-L${PWD}/qtwebengine/src/core/api/Release||" \
-  $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/Qt5WebEngineCore.pc
+#sed -i \
+#  -e 's|-Wl,--start-group.* -Wl,--end-group||' \
+#  -e "s|-L${PWD}/qtwebengine/src/core/api/Release||" \
+#  $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/Qt5WebEngineCore.pc
 
 # While we are at it, there isn't any reason to keep references to $PKG in the *.prl files.
 for PRL in $(find $PKG -name "*\.prl"); do
@@ -238,8 +239,8 @@ done
 sed -i "s|$PWD/qtbase|/usr/lib${LIBDIRSUFFIX}/$PRGNAM|" \
   $PKG/usr/lib${LIBDIRSUFFIX}/$PRGNAM/mkspecs/modules/qt_lib_bootstrap_private.pri
 
-sed -i "s|-L${PWD}/\w*/lib ||g" \
-  $PKG/usr/lib${LIBDIRSUFFIX}/libqgsttools_p.prl
+#sed -i "s|-L${PWD}/\w*/lib ||g" \
+#  $PKG/usr/lib${LIBDIRSUFFIX}/libqgsttools_p.prl
 
 for i in $CWD/desktop/*.desktop; do
   install -D -m 0644 $i $PKG/usr/share/applications/$(basename $i)
