@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+perl-gtk3: perl-gtk3 (Perl bindings for GTK3)
+perl-gtk3:
+perl-gtk3: Perl bindings to the 3.x series of the Gtk+ graphical user  interface
+perl-gtk3: library.
+perl-gtk3:
+perl-gtk3: Home page: http://gtk2-perl.sourceforge.net/
+perl-gtk3:
+perl-gtk3:
+perl-gtk3:
+perl-gtk3:
+perl-gtk3:
