@@ -1,0 +1,22 @@
+diff -ru libtorrent-rasterbar-1.1.7_orig/include/libtorrent/ip_filter.hpp libtorrent-rasterbar-1.1.7/include/libtorrent/ip_filter.hpp
+--- libtorrent-rasterbar-1.1.7_orig/include/libtorrent/ip_filter.hpp	2018-05-24 15:15:32.468845057 +0300
++++ libtorrent-rasterbar-1.1.7/include/libtorrent/ip_filter.hpp	2018-05-24 15:17:02.568852561 +0300
+@@ -42,6 +42,7 @@
+ 
+ #include <boost/limits.hpp>
+ #include <boost/utility.hpp>
++#include <boost/next_prior.hpp>
+ #include <boost/cstdint.hpp>
+ #include <boost/tuple/tuple.hpp>
+ 
+diff -ru libtorrent-rasterbar-1.1.7_orig/include/libtorrent/kademlia/routing_table.hpp libtorrent-rasterbar-1.1.7/include/libtorrent/kademlia/routing_table.hpp
+--- libtorrent-rasterbar-1.1.7_orig/include/libtorrent/kademlia/routing_table.hpp	2018-05-24 15:15:32.468845057 +0300
++++ libtorrent-rasterbar-1.1.7/include/libtorrent/kademlia/routing_table.hpp	2018-05-24 15:30:26.056919480 +0300
+@@ -40,6 +40,7 @@
+ 
+ #include <boost/cstdint.hpp>
+ #include <boost/utility.hpp>
++#include <boost/next_prior.hpp>
+ #include <boost/tuple/tuple.hpp>
+ #include <boost/array.hpp>
+ #include <boost/noncopyable.hpp>
