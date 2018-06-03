@@ -70,7 +70,6 @@ CFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
   --sysconfdir=/etc \
-  --enable-javascript \
   --enable-graphics \
   --build=$ARCH-slackware-linux || exit 1
 
