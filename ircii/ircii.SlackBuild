@@ -1,0 +1,169 @@
+#!/bin/sh
+#
+# -----------------------------------------------------------------------------
+#
+# Slackware SlackBuild script 
+# ===========================
+# By:        Eric Hameleers
+# For:       ircII
+# URL:       http://www.eterna.com.au/ircii/#current
+# Needs:     
+# Changelog:
+# 20040820-1: 23/nov/2004 by Eric Hameleers
+#             * Initial build.
+# 20040820-2: 23/nov/2004 by Eric Hameleers
+#             * Added documentation, built for $ARCH instead of i386
+# 
+# Run 'sh SlackBuild --cleanup' to build a Slackware package.
+# The package (.tgz) plus descriptive .txt file are created in /tmp .
+# Install using 'installpkg'. 
+#
+# -----------------------------------------------------------------------------
+# updated by saahriktu
+# -----------------------------------------------------------------------------
+
+# --- INIT ---
+# Set initial variables:
+CWD=`pwd`
+if [ "$TMP" = "" ]; then
+  TMP=/tmp
+fi
+
+PRGNAM=ircii
+VERSION=20190117
+ARCH=$(uname -m)
+BUILD=1
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+fi
+
+PKG=$TMP/package-$PRGNAM
+
+if [ ! -d $TMP/tmp-$PRGNAM ]; then
+  mkdir -p $TMP/tmp-$PRGNAM # location to build the source
+fi
+if [ ! -d $PKG ]; then
+  mkdir -p $PKG # place for the package to be built
+fi
+
+
+# --- PACKAGE BUILDING ---
+
+echo "++"
+echo "|| $PRGNAM-$VERSION"
+echo "++"
+
+rm -rf $PKG/*
+
+cd $PKG
+
+# Explode the package framework:
+if [ -f $CWD/_$PRGNAM.tar.xz ]; then
+  explodepkg $CWD/_$PRGNAM.tar.xz
+fi
+
+cd $TMP/tmp-$PRGNAM
+
+
+# --- TARBALL EXTRACTION,PATCH,MODIFY ---
+
+echo "Extracting the program tarball for $PRGNAM..."
+tar -xvf $CWD/${PRGNAM}-${VERSION}.tar.xz
+
+cd ${PRGNAM}-${VERSION}
+
+chown -R root.root *
+
+
+# --- BUILDING ---
+
+echo Building ...
+
+mkdir obj-${ARCH}
+cd obj-${ARCH}
+
+CFLAGS="$SLKCFLAGS" \
+../configure --prefix=/usr \
+            --localstatedir=/var \
+            --sysconfdir=/etc \
+            --with-default-server=localhost:6667 \
+             i486-slackware-linux \
+            2>&1 | tee $CWD/configure-${PRGNAM}.log
+make 2>&1 | tee $CWD/make-${PRGNAM}.log
+
+#
+# Install all the needed stuff to the package dir
+#
+# Use installwatch if available:
+which installwatch > /dev/null 2>&1
+if [ $? == 0 ]; then
+  installwatch -o $CWD/install-${PRGNAM}.log make DESTDIR=$PKG install
+else
+  make DESTDIR=$PKG install 2>&1 |tee $CWD/install-${PRGNAM}.log
+fi
+
+cd ..
+
+# --- DOCUMENTATION ---
+
+DOCS="ChangeLog INSTALL NEWS README doc/* todo contrib"
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCS \
+      $PKG/usr/doc/$PRGNAM-$VERSION
+rm -f $PKG/usr/doc/$PRGNAM-$VERSION/*.1
+chmod -R -w $PKG/usr/doc/$PRGNAM-$VERSION/*
+
+# The 'documentation' is located elsewhere
+(cd $PKG/usr/doc/$PRGNAM-$VERSION && ln -s /usr/share/irc)
+
+# Compress the man page(s)
+gzip -9f $PKG/usr/man/*/*
+
+# Strip binaries
+( cd $PKG
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+)
+
+
+# --- OWNERSHIP, RIGHTS ---
+
+chmod -R o-w $PKG
+chgrp root:bin $PKG/usr/bin/* $PKG/usr/sbin/* \
+               $PKG/bin/* $PKG/sbin/* 2>/dev/null
+
+
+# --- PACKAGE DESCRIPTION ---
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+if [ -f $CWD/doinst.sh ]; then
+  cat $CWD/doinst.sh > $PKG/install/doinst.sh
+fi
+
+
+# --- BUILDING ---
+
+# Build the package:
+cd $PKG
+makepkg --linkadd y --chown n $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.txz \
+  2>&1 | tee $CWD/makepkg-${PRGNAM}.log
+(cd $TMP && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.txz > $PRGNAM-$VERSION-$ARCH-$BUILD.txz.md5)
+cat $CWD/slack-desc | grep "^${PRGNAM}" > $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+
+
+# --- CLEANUP ---
+
+# Clean up the extra stuff:
+if [ "$1" = "--cleanup" ]; then
+  rm -rf $TMP/tmp-$PRGNAM
+  rm -rf $PKG
+fi
