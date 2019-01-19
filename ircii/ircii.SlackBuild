@@ -30,7 +30,7 @@ if [ "$TMP" = "" ]; then
 fi
 
 PRGNAM=ircii
-VERSION=20190117
+VERSION=$(ls ircii-*.tar.?z* | cut -d- -f 2 | cut -d. -f 1)
 ARCH=$(uname -m)
 BUILD=1
 
@@ -75,7 +75,7 @@ cd $TMP/tmp-$PRGNAM
 # --- TARBALL EXTRACTION,PATCH,MODIFY ---
 
 echo "Extracting the program tarball for $PRGNAM..."
-tar -xvf $CWD/${PRGNAM}-${VERSION}.tar.xz
+tar -xvf $CWD/${PRGNAM}-${VERSION}.tar.?z* 
 
 cd ${PRGNAM}-${VERSION}
 
