@@ -5,7 +5,7 @@
 # Written by Eric Schultz eric at schultzter.ca
 # Taken over by Vincent Batts vbatts@hashbangbash.com
 
-# Copyright (c) 2012, 2013, 2014, 2015, 2016  Vincent Batts
+# Copyright (c) 2012, 2013, 2014, 2015, 2016, 2017, 2018  Vincent Batts
 # Copyright (c) 2012 Eric Schultz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -27,7 +27,7 @@
 # SOFTWARE.
 
 PRGNAM=google-go-lang
-VERSION=$(ls go*.tar.?z* | sed 's/\.src\.tar\..*$//' | cut -b 3-)
+VERSION=$(ls go*.tar.?z* | sed 's/^go//;s/\.src.*$//')
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
@@ -68,7 +68,7 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG/usr/lib${LIBDIRSUFFIX}/go${VERSION} $OUTPUT
 cd $PKG/usr/lib${LIBDIRSUFFIX}/go${VERSION}
-tar xvf $CWD/go${VERSION}.src.tar.gz
+tar xvf $CWD/go${VERSION}.src.tar.?z*
 cd go
 chown -R root:root .
 find -L . \
@@ -82,7 +82,12 @@ find -L . \
 unset GOBIN GOPATH GOOS GOARCH
 unset BASH_ENV # Not sure why, but this causes run.bash to fail --rworkman
 
-export GOROOT_BOOTSTRAP="/usr" # gcc 5+ is go1.4 API, so we'll bootstrap with it
+#export GOROOT_BOOTSTRAP="/usr" # gcc 5+ is go1.4 API, so we'll bootstrap with it
+#export GOROOT="$(pwd)"
+#export GOROOT_FINAL="/usr/lib${LIBDIRSUFFIX}/go${VERSION}/go"
+
+INSTALLEDGOLANGVER=$(/usr/lib${LIBDIRSUFFIX}/go*/go/bin/go version | cut -d\  -f 3 | sed 's/^go//')
+export GOROOT_BOOTSTRAP="/usr/lib${LIBDIRSUFFIX}/go${INSTALLEDGOLANGVER}/go/"
 export GOROOT="$(pwd)"
 export GOROOT_FINAL="/usr/lib${LIBDIRSUFFIX}/go${VERSION}/go"
 
